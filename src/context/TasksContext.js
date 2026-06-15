@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { obtenerTareas, guardarTareas } from '../storage/tareas';
+import { cancelarRecordatorio } from '../notifications/notificaciones';
 
 const TasksContext = createContext(null);
 
