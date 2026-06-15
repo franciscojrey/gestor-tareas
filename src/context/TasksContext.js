@@ -13,11 +13,12 @@ export function TasksProvider({ children }) {
     })();
   }, []);
 
-  const agregarTarea = async (titulo) => {
+  const agregarTarea = async (titulo, notificationId = null) => {
     const nueva = {
       id: Date.now().toString(),
       titulo,
       completada: false,
+      notificationId,
     };
     const actualizadas = [nueva, ...tareas];
     setTareas(actualizadas);
@@ -25,6 +26,10 @@ export function TasksProvider({ children }) {
   };
 
   const eliminarTarea = async (id) => {
+    const tarea = tareas.find((t) => t.id === id);
+    if (tarea?.notificationId) {
+      await cancelarRecordatorio(tarea.notificationId);
+    }
     const actualizadas = tareas.filter((t) => t.id !== id);
     setTareas(actualizadas);
     await guardarTareas(actualizadas);

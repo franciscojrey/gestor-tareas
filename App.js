@@ -1,7 +1,9 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ActivityIndicator, View } from 'react-native';
+import { useEffect } from 'react';
 
+import { configurarNotificaciones } from './src/notifications/notificaciones';
 import { TasksProvider } from './src/context/TasksContext';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import LoginScreen from './src/screens/LoginScreen';
@@ -40,6 +42,10 @@ function Navegacion() {
 }
 
 export default function App() {
+  useEffect(() => {
+    configurarNotificaciones();
+  }, []);
+
   return (
     <AuthProvider>
       <TasksProvider>

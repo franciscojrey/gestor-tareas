@@ -1,17 +1,26 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useTasks } from '../context/TasksContext';
+import { programarRecordatorio } from '../notifications/notificaciones';
 
 export default function NuevaTareaScreen({ navigation }) {
   const { agregarTarea } = useTasks();
   const [titulo, setTitulo] = useState('');
+  const [minutos, setMinutos] = useState('');
 
   const handleGuardar = async () => {
     if (titulo.trim() === '') {
       Alert.alert('Falta el título', 'Escribí un título para la tarea');
       return;
     }
-    await agregarTarea(titulo.trim());
+
+    let notificationId = null;
+    const min = parseFloat(minutos);
+    if (!isNaN(min) && min > 0) {
+      notificationId = await programarRecordatorio(titulo.trim(), min);
+    }
+
+    await agregarTarea(titulo.trim(), notificationId);
     navigation.goBack();
   };
 
@@ -20,11 +29,21 @@ export default function NuevaTareaScreen({ navigation }) {
       <Text style={styles.label}>Título de la tarea</Text>
       <TextInput
         style={styles.input}
-        placeholder="Título"
+        placeholder="Ej: Estudiar React Native"
         value={titulo}
         onChangeText={setTitulo}
         autoFocus
       />
+
+      <Text style={styles.label}>Recordarme en (minutos)</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Minutos"
+        keyboardType="numeric"
+        value={minutos}
+        onChangeText={setMinutos}
+      />
+
       <TouchableOpacity style={styles.boton} onPress={handleGuardar}>
         <Text style={styles.botonTexto}>Guardar tarea</Text>
       </TouchableOpacity>

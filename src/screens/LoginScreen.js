@@ -16,7 +16,7 @@ export default function LoginScreen({ navigation }) {
     if (!valido) {
       Alert.alert('Error', 'Usuario o contraseña incorrectos');
     }
-    // Si es válido no navegamos: el cambio de estado lleva al Home solo.
+    
   };
 
   return (
