@@ -1,11 +1,14 @@
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import { useTasks } from '../context/TasksContext';
+import { useTasksStore } from '../store/useTasksStore';
 import TareaItem from '../components/TareaItem';
 
 export default function HomeScreen({ navigation }) {
   const { usuario, logout } = useAuth();
-  const { tareas, eliminarTarea, alternarCompletada } = useTasks();
+
+  const tareas = useTasksStore((s) => s.tareas);
+  const eliminarTarea = useTasksStore((s) => s.eliminarTarea);
+  const alternarCompletada = useTasksStore((s) => s.alternarCompletada);
 
   return (
     <View style={styles.container}>

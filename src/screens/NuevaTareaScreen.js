@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { useTasks } from '../context/TasksContext';
+import { useTasksStore } from '../store/useTasksStore';
 import { programarRecordatorio } from '../notifications/notificaciones';
 
 export default function NuevaTareaScreen({ navigation }) {
-  const { agregarTarea } = useTasks();
+  const agregarTarea = useTasksStore((s) => s.agregarTarea);
   const [titulo, setTitulo] = useState('');
   const [minutos, setMinutos] = useState('');
 
