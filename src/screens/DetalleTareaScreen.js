@@ -2,11 +2,26 @@ import { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, Alert,
 } from 'react-native';
+import { Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import * as Contacts from 'expo-contacts';
+import * as Calendar from 'expo-calendar';
+
 import { useTasksStore } from '../store/useTasksStore';
 import { pedirPermiso } from '../permissions/permisos';
+
+async function obtenerCalendarioId() {
+  if (Platform.OS === 'ios') {
+    const cal = await Calendar.getDefaultCalendarAsync();
+    return cal?.id ?? null;
+  }
+  const calendarios = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+  const modificable = calendarios.find((c) => c.allowsModifications);
+  return modificable?.id ?? null;
+}
 
 export default function DetalleTareaScreen({ route, navigation }) {
   const { tareaId } = route.params;
@@ -17,6 +32,9 @@ export default function DetalleTareaScreen({ route, navigation }) {
   const actualizarTarea = useTasksStore((s) => s.actualizarTarea);
 
   const [cargandoUbic, setCargandoUbic] = useState(false);
+
+  const [fechaEvento, setFechaEvento] = useState(new Date());
+  const [mostrarPicker, setMostrarPicker] = useState(false);
 
   if (!tarea) {
     return (
@@ -102,6 +120,40 @@ export default function DetalleTareaScreen({ route, navigation }) {
     }
   };
 
+  const handleAgregarCalendario = async () => {
+    const ok = await pedirPermiso(
+      () => Calendar.requestCalendarPermissionsAsync(),
+      'calendario'
+    );
+    if (!ok) return;
+  
+    try {
+      const calendarId = await obtenerCalendarioId();
+      if (!calendarId) {
+        Alert.alert('Error', 'No se encontró un calendario donde escribir.');
+        return;
+      }
+  
+      const fin = new Date(fechaEvento.getTime() + 60 * 60 * 1000);
+  
+      const eventId = await Calendar.createEventAsync(calendarId, {
+        title: tarea.titulo,
+        startDate: fechaEvento,
+        endDate: fin,
+        notes: 'Creado desde el Gestor de Tareas',
+        location: tarea.ubicacion?.direccion ?? undefined,
+      });
+  
+      actualizarTarea(tarea.id, {
+        evento: { id: eventId, fecha: fechaEvento.toISOString() },
+      });
+      Alert.alert('Listo', 'Evento agregado al calendario del teléfono.');
+    } catch (e) {
+      console.log(e);
+      Alert.alert('Error', 'No se pudo crear el evento.');
+    }
+  };
+
   const handleEliminar = async () => {
     await eliminarTarea(tarea.id);
     navigation.goBack();
@@ -183,6 +235,48 @@ export default function DetalleTareaScreen({ route, navigation }) {
         )}
         <TouchableOpacity style={styles.botonChico} onPress={handleElegirContacto}>
           <Text style={styles.botonChicoTexto}>👤 Elegir contacto</Text>
+        </TouchableOpacity>
+      </View>
+      
+      <View style={styles.seccion}>
+        <Text style={styles.seccionTitulo}>Calendario</Text>
+
+        {tarea.evento ? (
+            <Text style={styles.valor}>
+            ✅ Agendado para {new Date(tarea.evento.fecha).toLocaleString()}
+            </Text>
+        ) : (
+            <Text style={styles.placeholder}>No agendado todavía</Text>
+        )}
+
+        {Platform.OS === 'ios' ? (
+            <DateTimePicker
+            value={fechaEvento}
+            mode="datetime"
+            onChange={(e, d) => d && setFechaEvento(d)}
+            />
+        ) : (
+            <>
+            <TouchableOpacity style={styles.botonSec} onPress={() => setMostrarPicker(true)}>
+                <Text style={styles.botonSecTexto}>
+                🗓️ {fechaEvento.toLocaleString()}
+                </Text>
+            </TouchableOpacity>
+            {mostrarPicker && (
+                <DateTimePicker
+                value={fechaEvento}
+                mode="datetime"
+                onChange={(e, d) => {
+                    setMostrarPicker(false);
+                    if (d) setFechaEvento(d);
+                }}
+                />
+            )}
+            </>
+        )}
+
+        <TouchableOpacity style={styles.botonChico} onPress={handleAgregarCalendario}>
+            <Text style={styles.botonChicoTexto}>➕ Agregar al calendario</Text>
         </TouchableOpacity>
       </View>
 
