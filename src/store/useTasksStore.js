@@ -38,7 +38,6 @@ export const useTasksStore = create(
         });
       },
 
-      // La vamos a usar pronto para adjuntar foto, ubicación, contacto, etc.
       actualizarTarea: (id, cambios) => {
         set({
           tareas: get().tareas.map((t) =>
@@ -48,7 +47,7 @@ export const useTasksStore = create(
       },
     }),
     {
-      name: 'tareas-storage',                       // clave en AsyncStorage
+      name: 'tareas-storage',
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

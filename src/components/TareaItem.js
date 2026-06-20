@@ -1,12 +1,16 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-export default function TareaItem({ tarea, onToggle, onEliminar }) {
+export default function TareaItem({ tarea, onToggle, onAbrir, onEliminar }) {
   return (
     <View style={styles.item}>
-      <TouchableOpacity style={styles.izquierda} onPress={onToggle}>
+      <TouchableOpacity onPress={onToggle}>
         <View style={[styles.check, tarea.completada && styles.checkOn]}>
           {tarea.completada && <Text style={styles.tilde}>✓</Text>}
         </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.centro} onPress={onAbrir}>
+        {tarea.foto && <Image source={{ uri: tarea.foto }} style={styles.miniatura} />}
         <Text style={[styles.titulo, tarea.completada && styles.tachado]}>
           {tarea.titulo}
         </Text>
@@ -23,13 +27,13 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: '#f3f4f6',
     padding: 14,
     borderRadius: 10,
     marginBottom: 10,
+    gap: 12,
   },
-  izquierda: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: 12 },
+  centro: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
   check: {
     width: 24, height: 24, borderRadius: 12,
     borderWidth: 2, borderColor: '#2563eb',
@@ -39,5 +43,6 @@ const styles = StyleSheet.create({
   tilde: { color: '#fff', fontWeight: 'bold' },
   titulo: { fontSize: 16, flexShrink: 1 },
   tachado: { textDecorationLine: 'line-through', color: '#9ca3af' },
-  borrar: { fontSize: 20, paddingLeft: 8 },
+  miniatura: { width: 36, height: 36, borderRadius: 6 },
+  borrar: { fontSize: 20 },
 });

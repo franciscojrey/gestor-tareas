@@ -9,6 +9,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import RegistroScreen from './src/screens/RegistroScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import NuevaTareaScreen from './src/screens/NuevaTareaScreen';
+import DetalleTareaScreen from './src/screens/DetalleTareaScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +35,7 @@ function Navegacion() {
         <>
           <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Mis Tareas' }} />
           <Stack.Screen name="NuevaTarea" component={NuevaTareaScreen} options={{ title: 'Nueva Tarea' }} />
+          <Stack.Screen name="DetalleTarea" component={DetalleTareaScreen} options={{ title: 'Detalle' }} />
         </>
       )}
     </Stack.Navigator>
