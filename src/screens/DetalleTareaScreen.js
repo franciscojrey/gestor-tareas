@@ -12,6 +12,7 @@ import * as Calendar from 'expo-calendar';
 
 import { useTasksStore } from '../store/useTasksStore';
 import { pedirPermiso } from '../permissions/permisos';
+import { formatearDireccion } from '../utils/formato';
 
 async function obtenerCalendarioId() {
   if (Platform.OS === 'ios') {
@@ -87,14 +88,11 @@ export default function DetalleTareaScreen({ route, navigation }) {
       let direccion = null;
       try {
         const lugares = await Location.reverseGeocodeAsync({ latitude, longitude });
-        if (lugares.length > 0) {
-          const l = lugares[0];
-          direccion = [l.name, l.city, l.region].filter(Boolean).join(', ');
-        }
+        direccion = formatearDireccion(lugares[0]);
       } catch (e) {
         console.log('No se pudo obtener la dirección:', e);
       }
-
+      
       actualizarTarea(tarea.id, { ubicacion: { latitude, longitude, direccion } });
     } catch (e) {
       Alert.alert('Error', 'No se pudo obtener la ubicación. Probá de nuevo.');
