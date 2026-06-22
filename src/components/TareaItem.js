@@ -17,7 +17,7 @@ export default function TareaItem({ tarea, onToggle, onAbrir, onEliminar }) {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onEliminar}>
-        <Text style={styles.borrar}>🗑️</Text>
+        <Text style={styles.borrar}>Borrar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -44,5 +44,5 @@ const styles = StyleSheet.create({
   titulo: { fontSize: 16, flexShrink: 1 },
   tachado: { textDecorationLine: 'line-through', color: '#9ca3af' },
   miniatura: { width: 36, height: 36, borderRadius: 6 },
-  borrar: { fontSize: 20 },
+  borrar: { fontSize: 20, color: '#dc2626' },
 });
