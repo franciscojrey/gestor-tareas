@@ -84,6 +84,8 @@ src/
 
 ## Video demo
 
+https://www.youtube.com/shorts/5izViINR9fs
+
 ---
 
 ## IA aplicada al desarrollo
